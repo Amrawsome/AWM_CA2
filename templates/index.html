@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+    {% load pwa %}
+    <head>
+        <meta charset="UTF-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+        />
+
+        {% progressive_web_app_meta %}
+        <title>Leaflet Search location by Lat/Lng</title>
+        <link
+            rel="stylesheet"
+            href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+        />
+
+        <style>
+            body {
+                margin: 0;
+                padding: 0;
+                display: flex;
+            }
+            #map {
+                flex: 1;
+                height: 64vh;
+            }
+            .leaflet-container {
+                display: flex;
+                flex-direction: column;
+            }
+            .leaflet-top.leaflet-right {
+                position: absolute;
+                top: 20px;
+                width: auto;
+                height: auto;
+                right: 1vw;
+            }
+            .leaflet-control.search {
+                position: absolute;
+            }
+            .data {
+                height: 35vh;
+                width: 100vw;
+                position: absolute;
+                bottom: 1vh;
+                overflow: auto;
+            }
+            .routing {
+                margin: auto;
+                margin-bottom: 1vh;
+                text-align: center;
+            }
+            .routing select {
+                font-size: 1.7vh;
+            }
+            .add-location {
+                margin: auto;
+                text-align: center;
+                width: 20vw;
+                display: flex;
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .add-location label {
+                font-size: 2.5vh;
+            }
+            .add-location input {
+                border-width: 2px;
+                border-style: solid;
+                border-color: black;
+                font-size: 1.7vh;
+                text-align: center;
+            }
+            .add-location button {
+                margin-top: 2vh;
+                font-size: 2vh;
+            }
+            .add-location textarea {
+                border-width: 2px;
+                border-style: solid;
+                border-color: black;
+            }
+            #delete-location {
+                text-align: center;
+            }
+            #delete-location select {
+                font-size: 1.7vh;
+            }
+            #delete-location button {
+                font-size: 1.7vh;
+            }
+            #edit-location {
+                margin: auto;
+                text-align: center;
+                font-size: 2vh;
+                width: 20%;
+                margin-bottom: 1vh;
+            }
+            #edit-location label,
+            #edit-location select,
+            #edit-location input,
+            #edit-location textarea,
+            #edit-location button {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+            #edit-location label {
+                font-size: 2.5vh;
+            }
+            #edit-location select,
+            #edit-select {
+                font-size: 1.7vh;
+            }
+            #edit-location input {
+                border-width: 2px;
+                border-style: solid;
+                border-color: black;
+                font-size: 1.7vh;
+            }
+            #edit-location textarea {
+                border-width: 2px;
+                border-style: solid;
+                border-color: black;
+                font-size: 1.7vh;
+            }
+            #edit-location button {
+                font-size: 2vh;
+            }
+            #location-selection {
+                margin: auto;
+                text-align: center;
+                font-size: 2vh;
+                width: 20%;
+                margin-bottom: 1vh;
+            }
+            #location-selection select {
+                font-size: 1.7vh;
+            }
+            @media only screen and (max-width: 600px) {
+                body {
+                    display: block;
+                }
+                #map {
+                    height: 49vh;
+                }
+                .data {
+                    height: 50vh;
+                    width: 100vw;
+                    position: absolute;
+                    overflow: auto;
+                }
+                .leaflet-top.leaflet-right {
+                    position: absolute;
+                    top: 20px;
+                    width: auto;
+                    height: auto;
+                    right: 1vw;
+                }
+                .routing,
+                .add-location,
+                #delete-location,
+                #edit-location,
+                #location-selection {
+                    text-align: center;
+                    font-size: 2vh;
+                    width: 100%;
+                    margin-bottom: 1vh;
+                }
+                .routing,
+                .routing select,
+                .routing button,
+                .add-location label,
+                .add-location input,
+                .add-location textarea,
+                .add-location button,
+                #edit-location select,
+                #edit-location label,
+                #edit-location input,
+                #edit-location textarea,
+                #edit-location button {
+                    text-align: center;
+                    font-size: 2vh;
+                    width: 100%;
+                    margin-bottom: 1vh;
+                }
+                #delete-location select,
+                #delete-location button {
+                    text-align: center;
+                    font-size: 2vh;
+                    width: 100%;
+                    margin-bottom: 1vh;
+                }
+                #location-selection select,
+                #location-selection button {
+                    text-align: center;
+                    font-size: 2vh;
+                    width: 100%;
+                    margin-bottom: 1vh;
+                }
+                .routing select,
+                #start-select,
+                #end-select,
+                #edit-location,
+                #edit-select {
+                    margin-bottom: 10px;
+                }
+                #edit-location label {
+                    font-size: 2.5vh;
+                }
+                .add-location label {
+                    font-size: 2.5vh;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        {% csrf_token %}
+        <div id="map"></div>
+        <div class="data">
+            <div class="routing">
+                <h2>Choosing Route</h2>
+                <select id="start-select">
+                    <option value="current-location">
+                        Use Current Location
+                    </option>
+                    {% for location in locations %}
+                    <option value="{{ location.id }}">
+                        {{ location.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+                <select id="end-select">
+                    <option value="">Select End Location</option>
+                    {% for location in locations %}
+                    <option value="{{ location.id }}">
+                        {{ location.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+                <button id="search-btn">Search</button>
+                <button id="cancel-routing-btn">Cancel Routing</button>
+            </div>
+            <div class="add-location">
+                <h2>Add New Location</h2>
+                <label for="new-id">ID:</label>
+                <input type="text" id="new-id" />
+                <label for="new-location-name">Name:</label>
+                <input type="text" id="new-location-name" />
+                <label for="new-location-category">Category:</label>
+                <input type="text" id="new-location-category" />
+                <label for="new-location-desc">Description:</label>
+                <textarea id="new-location-desc"></textarea>
+                <label for="new-location-lat">Latitude:</label>
+                <input type="text" id="new-location-lat" />
+                <label for="new-location-long">Longitude:</label>
+                <input type="text" id="new-location-long" />
+                <button id="add-location-btn">Add Location</button>
+            </div>
+            <div id="delete-location">
+                <h2>Delete Location</h2>
+                <select id="delete-select">
+                    <option value="">Locations</option>
+                    {% for location in locations %}
+                    <option value="{{ location.id }}">
+                        {{ location.name}} ID:{{ location.id }}
+                    </option>
+                    {% endfor %}
+                </select>
+                <button id="delete-location-btn">Delete Location</button>
+            </div>
+            <div id="edit-location">
+                <h2>Edit Location</h2>
+                <select id="edit-select">
+                    <option value="">Select Location</option>
+                    {% for location in locations %}
+                    <option value="{{ location.id }}">
+                        {{ location.name}} ID:{{ location.id }}
+                    </option>
+                    {% endfor %}
+                </select>
+                <label for="edit-location-name">Name:</label>
+                <input type="text" id="edit-location-name" />
+                <label for="edit-location-category">Category:</label>
+                <input type="text" id="edit-location-category" />
+                <label for="edit-location-desc">Description:</label>
+                <textarea id="edit-location-desc"></textarea>
+                <label for="edit-location-lat">Latitude:</label>
+                <input type="text" id="edit-location-lat" />
+                <label for="edit-location-long">Longitude:</label>
+                <input type="text" id="edit-location-long" />
+                <button id="edit-location-btn">Edit Location</button>
+            </div>
+            <div id="location-selection">
+                <h2>Fly to Location</h2>
+                <select id="fly-to-location">
+                    <option value="">Select Location</option>
+                    {% for location in locations %}
+                    <option value="{{ location.id }}">
+                        {{ location.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+    </body>
+</html>
+<!-- leaflet js  -->
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+<!-- Leaflet Routing Machine CSS -->
+<link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css"
+/>
+<!-- Leaflet Routing Machine JS -->
+<script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
+<!-- jquery  -->
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script>
+        var locations = {{ locations|safe }};
+        var markers = [];
+        const csrfToken = "{{ csrf_token }}";
+        var map;
+        var control;
+
+        function createMap() {
+
+            map = L.map('map').setView([53.5, -8.5], 8);
+
+            var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            });
+            osm.addTo(map);
+        }
+        createMap();
+        var locations = {{ locations|safe }};
+        console.log(locations);
+
+        function createMarkers() {
+            locations.forEach(function(location) {
+                var marker = L.marker([location.lat, location.long]).addTo(map);
+                marker.bindPopup("Category: "+ location.category +"<br>"+"Name: "+location.name + "<br>" + "Description: "+location.desc); // Display additional information in a popup
+                markers.push(marker);
+            });
+        }
+        createMarkers();
+
+        function initializeRoutingControl() {
+
+            control = L.Routing.control({
+                waypoints: [],
+                routeWhileDragging: true,
+                position: 'topright'
+            });
+            control.addTo(map);
+        }
+        initializeRoutingControl();
+
+        $('#cancel-routing-btn').click(function () {
+
+            control.setWaypoints([]);
+            markers.forEach(function (marker) {
+                map.removeLayer(marker);
+            });
+        });
+
+
+        var startSelect = document.getElementById('start-select');
+        var endSelect = document.getElementById('end-select');
+        locations.forEach(function(location) {
+            var option = document.createElement('option');
+            option.value = location.id;
+            option.textContent = location.name;
+            startSelect.appendChild(option.cloneNode(true));
+            endSelect.appendChild(option.cloneNode(true));
+        });
+
+
+        $('#search-btn').click(function() {
+
+            var selectedStartId = $('#start-select').val();
+            var selectedEndId = $('#end-select').val();
+
+
+            var selectedStartLocation;
+            if (selectedStartId === 'current-location') {
+
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    selectedStartLocation = {
+                        lat: position.coords.latitude,
+                        long: position.coords.longitude,
+                    };
+                    performRouting(selectedStartLocation, selectedEndId);
+                }, function(error) {
+                    console.error('Error getting current location:', error);
+                });
+            } else {
+                selectedStartLocation = locations.find(function(location) {
+                    return location.id == selectedStartId;
+                });
+                performRouting(selectedStartLocation, selectedEndId);
+            }
+        });
+
+        function performRouting(startLocation, endId) {
+            control.setWaypoints([]);
+
+
+            var bounds = L.latLngBounds(
+                L.latLng(startLocation.lat, startLocation.long),
+                L.latLng(locations[endId - 1].lat, locations[endId - 1].long)
+            );
+            map.fitBounds(bounds);
+
+
+            var startMarker = L.marker([startLocation.lat, startLocation.long],).addTo(map);
+            var endMarker = L.marker([locations[endId - 1].lat, locations[endId - 1].long],).addTo(map);
+
+    var customStartMarker = L.marker([startLocation.lat, startLocation.long]).addTo(map);
+    var customEndMarker = L.marker([locations[endId - 1].lat, locations[endId - 1].long]).addTo(map);
+
+
+    control.setWaypoints([
+        L.latLng(startLocation.lat, startLocation.long),
+        L.latLng(locations[endId - 1].lat, locations[endId - 1].long)
+    ]);
+
+
+
+    markers = [customStartMarker, customEndMarker];
+    }
+
+    $('#add-location-btn').click(function () {
+        var newID = $('#new-id').val();
+        var newName = $('#new-location-name').val();
+        var newCategory = $('#new-location-category').val();
+        var newDesc = $('#new-location-desc').val();
+        var newLat = parseFloat($('#new-location-lat').val());
+        var newLong = parseFloat($('#new-location-long').val());
+
+
+        if (!newName || !newCategory || !newDesc || isNaN(newLat) || isNaN(newLong)) {
+            alert('Please fill out all fields with valid data.');
+            return;
+        }
+
+
+        fetch('/Location/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify({
+                id: newID,
+                name: newName,
+                category: newCategory,
+                desc: newDesc,
+                lat: newLat,
+                long: newLong
+            }),
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Location created successfully:', data);
+                location.reload();
+            })
+            .catch(error => {
+                console.error('Error creating location:', error);
+            });
+    });
+
+    $('#delete-location-btn').click(function () {
+        var selectedLocationId = $('#delete-select').val();
+        var ID = selectedLocationId.replace(/\D/g, '');
+
+
+        fetch('/Location/' + ID + '/', {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken,
+
+            },
+        })
+            .then(response => {
+
+                if (response.ok) {
+
+                    console.log('Location deleted successfully.');
+                    location.reload();
+                } else {
+                    console.error('Error deleting location:', response.statusText);
+                }
+            })
+            .catch(error => {
+                console.error('Error deleting location:', error);
+            });
+    });
+
+    $('#edit-location-btn').click(function () {
+    var selectedLocationId = $('#edit-select').val();
+    var ID = selectedLocationId.replace(/\D/g, '');
+
+    var newName = $('#edit-location-name').val();
+    var newCategory = $('#edit-location-category').val();
+    var newDesc = $('#edit-location-desc').val();
+    var newLat = parseFloat($('#edit-location-lat').val());
+    var newLong = parseFloat($('#edit-location-long').val());
+
+
+    if (!newName || !newCategory || !newDesc || isNaN(newLat) || isNaN(newLong)) {
+        alert('Please fill out all fields with valid data.');
+        return;
+    }
+
+
+    fetch('/Location/' + ID + '/', {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken,
+        },
+        body: JSON.stringify({
+            id: ID,
+            name: newName,
+            category: newCategory,
+            desc: newDesc,
+            lat: newLat,
+            long: newLong
+        }),
+    })
+    .then(response => {
+
+        if (response.ok) {
+            console.log('Location edited successfully.');
+            location.reload();
+        } else {
+            console.error('Error editing location:', response.statusText);
+        }
+    })
+    .catch(error => {
+        console.error('Error editing location:', error);
+    });
+    });
+
+
+    $('#edit-select').change(function() {
+    var selectedLocationId = $(this).val();
+    if (selectedLocationId) {
+        var selectedLocation = locations.find(function(location) {
+            return location.id == selectedLocationId;
+        });
+
+
+        $('#edit-location-name').val(selectedLocation.name);
+        $('#edit-location-category').val(selectedLocation.category);
+        $('#edit-location-desc').val(selectedLocation.desc);
+        $('#edit-location-lat').val(selectedLocation.lat);
+        $('#edit-location-long').val(selectedLocation.long);
+
+    } else {
+
+        $('#edit-location-name').val('');
+        $('#edit-location-category').val('');
+        $('#edit-location-desc').val('');
+        $('#edit-location-lat').val('');
+        $('#edit-location-long').val('');
+        // Clear other fields as needed
+    }
+    });
+
+    $('#fly-to-location').change(function() {
+        var selectedLocationId = $(this).val();
+        if (selectedLocationId) {
+            var selectedLocation = locations.find(function(location) {
+                return location.id == selectedLocationId;
+            });
+            map.flyTo([selectedLocation.lat, selectedLocation.long], 15);
+        }
+    });
+</script>

@@ -1,0 +1,140 @@
+{
+    "locations": [
+      {
+        "id": 1,
+        "category": "Transport",
+        "name": "Connolly Station",
+        "desc": "Train Station at Amiens St, North Dock, Dublin",
+        "lat": 53.35097,
+        "long": -6.25
+      },
+      {
+        "id": 2,
+        "category": "Transport",
+        "name": "Clontarf Road Station",
+        "desc": "Train Station at Clontarf West, Dublin",
+        "lat": 53.3631,
+        "long": -6.2267
+      },
+      {
+        "id": 3,
+        "category": "Transport",
+        "name": "Killester Station",
+        "desc": "Train Station at Middle Third, Clontarf East, Dublin 5",
+        "lat": 53.3729,
+        "long": -6.2041
+      },
+      {
+        "id": 4,
+        "category": "Transport",
+        "name": "Tara Street Station",
+        "desc": "Train Station at Tara St, Dublin 2, D02 W597",
+        "lat": 53.3474,
+        "long": -6.2544
+      },
+      {
+        "id": 5,
+        "category": "Shopping",
+        "name": "Jervis Shopping Centre",
+        "desc": "Shopping Centre at 125 Abbey Street Upper, North City, Dublin, D01 W3X5",
+        "lat": 53.349,
+        "long": -6.2654
+      },
+      {
+        "id": 6,
+        "category": "Shopping",
+        "name": "ILAC Shopping Centre",
+        "desc": "Shopping Centre at Henry St, North City, Dublin, D01 HW54",
+        "lat": 53.3499,
+        "long": -6.2638
+      },
+      {
+        "id": 7,
+        "category": "Shopping",
+        "name": "Stephen's Green Shopping Centre",
+        "desc": "Shopping Centre at St Stephen's Green, Dublin, D02 HX65",
+        "lat": 53.34,
+        "long": -6.2609
+      },
+      {
+        "id": 8,
+        "category": "Shopping",
+        "name": "Northside Shopping Centre",
+        "desc": "Shopping Centre at Northside Shopping Centre, Oscar Traynor Rd, Dublin 17",
+        "lat": 53.3951,
+        "long": -6.2124
+      },
+      {
+        "id": 9,
+        "category": "Shopping",
+        "name": "Omni Park Shopping Centre",
+        "desc": "Shopping Centre at Swords Rd, Santry, Dublin, D09 HH61",
+        "lat": 53.3922,
+        "long": -6.2463
+      },
+      {
+        "id": 10,
+        "category": "Museum",
+        "name": "National Museum of Ireland - Natural History",
+        "desc": "Museum at Merrion St Upper, Dublin 2, D02 F627",
+        "lat": 53.3397,
+        "long": -6.2528
+      },
+      {
+        "id": 11,
+        "category": "Museum",
+        "name": "National Museum of Ireland - Archaeology",
+        "desc": "Museum at 35A Kildare St, Dublin 2, D02 YK38",
+        "lat": 53.3405,
+        "long": -6.2548
+      },
+      {
+        "id": 12,
+        "category": "Museum",
+        "name": "GPO Museum",
+        "desc": "Museum at O'Connell Street Lower, North City, Dublin 1, D01 F5P2",
+        "lat": 53.3496,
+        "long": -6.2604
+      },
+      {
+        "id": 13,
+        "category": "Museum",
+        "name": "Irish Museum of Modern Art",
+        "desc": "Museum at Royal Hospital Kilmainham, Military Rd, Kilmainham, Dublin 8, D08 FW31",
+        "lat": 53.3424,
+        "long": -6.3004
+      },
+      {
+        "id": 14,
+        "category": "Theatre",
+        "name": "The Gaiety Theatre",
+        "desc": "Museum at King St S, Dublin 2",
+        "lat": 53.3402,
+        "long": -6.2617
+      },
+      {
+        "id": 15,
+        "category": "Theatre",
+        "name": "Gate Theatre",
+        "desc": "Museum at Cavendish Row, Parnell Square E, Rotunda, Dublin 1",
+        "lat": 53.3531,
+        "long": -6.262
+      },
+      {
+        "id": 16,
+        "category": "Theatre",
+        "name": "Abbey Theatre",
+        "desc": "Museum at 26/27 Abbey Street Lower, North City, Dublin 1, D01 K0F1",
+        "lat": 53.3485,
+        "long": -6.2575
+      },
+      {
+        "id": 17,
+        "category": "Theatre",
+        "name": "Bord Gáis Energy Theatre",
+        "desc": "Museum at Grand Canal Square, Docklands, Dublin",
+        "lat": 53.3441,
+        "long": -6.2395
+      }
+    ]
+  }
